@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load widget_tweaks %}
+
+{% block page_title %}
+  Entity | Create | Inspections
+{% endblock page_title %}
+
+{% block breadcrambs %}
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Entity Create</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'inspection:inspection-entity-list' %}">Entities</a></li>
+            <li class="breadcrumb-item active">Create</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+{% endblock breadcrambs %}
+
+{% block content %}
+	<section class="content">
+		<div class="card">
+			<div class="card-header">
+				<h3>Entity Create</h3>
+			</div>
+			<div class="card-body">
+        {% if form.errors %}
+          {% for field in form %}
+              {% for error in field.errors %}
+                  <div class="custom-alerts alert alert-danger">
+                      <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+                      <strong>{{field.label}}: {{ error|escape }}</strong>
+                  </div>
+              {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+              <div class="alert alert-danger">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                  <strong>{{ error|escape }}</strong>
+              </div>
+          {% endfor %}
+        {% endif %}
+				<form method="post">
+				  {% csrf_token %}
+
+				  {% bootstrap_form form %}
+
+				  {% buttons %}
+			      <button type="submit" class="btn btn-primary">Submit</button>
+			   	{% endbuttons %}
+				  
+				</form>
+			</div>
+		</div>
+	</section>
+{% endblock content %}
+
+{% block extra_js %}
+  <script type="text/javascript">
+    function updateElementIndex(el, prefix, ndx) {
+        var id_regex = new RegExp('(' + prefix + '-\\d+)');
+        var replacement = prefix + '-' + ndx;
+        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+        if (el.name) el.name = el.name.replace(id_regex, replacement);
+    }
+    
+    function cloneMore(selector, prefix) {
+        var newElement = $(selector).clone(true);
+        var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+        newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
+            var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+            var id = 'id_' + name;
+            $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+        });
+        newElement.find('label').each(function() {
+            var forValue = $(this).attr('for');
+            if (forValue) {
+              forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
+              $(this).attr({'for': forValue});
+            }
+        });
+        total++;
+        
+        $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+        $(selector).after(newElement);
+        var conditionRow = $('.formset_row:not(:last)');
+        conditionRow.find('.btn.'+prefix+'-add-form-row')
+        .removeClass('btn-success').addClass('btn-danger')
+        .removeClass(prefix+'-add-form-row').addClass(prefix+'-remove-form-row')
+        .html('-');
+        return false;
+    }
+    function deleteForm(prefix, btn) {
+        var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        debugger
+        if (total > 1){
+            btn.closest('.formset_row').remove();
+            var forms = $('.formset_row');
+            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+            for (var i=0, formCount=forms.length; i<formCount; i++) {
+                $(forms.get(i)).find(':input').each(function() {
+                    updateElementIndex(this, prefix, i);
+                });
+            }
+        }
+        return false;
+    }
+    $(document).on('click', '.device-add-form-row', function(e){
+        e.preventDefault();
+        cloneMore('.formset_row:last', 'device');
+        return false;
+    });
+    $(document).on('click', '.device-remove-form-row', function(e){
+        e.preventDefault();
+        deleteForm('device', $(this));
+        return false;
+    });
+
+    $(document).on('click', '.question_category-add-form-row', function(e){
+        debugger
+        e.preventDefault();
+        cloneMore('.formset_row:last', 'question_category');
+        return false;
+    });
+    $(document).on('click', '.question_category-remove-form-row', function(e){
+        e.preventDefault();
+        deleteForm('question_category', $(this));
+        return false;
+    });
+
+    $(document).on('click', '.question-add-form-row', function(e){
+        e.preventDefault();
+        cloneMore('.formset_row:last', 'question');
+        return false;
+    });
+    $(document).on('click', '.question-remove-form-row', function(e){
+        e.preventDefault();
+        deleteForm('question', $(this));
+        return false;
+    });
+  </script>
+{% endblock extra_js %}

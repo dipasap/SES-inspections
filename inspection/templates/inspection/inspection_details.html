@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load bootstrap4 %}
+
+{% block page_title %}
+  Inspections
+{% endblock page_title %}
+
+{% block breadcrambs %}
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{object.name}} Details</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/">Inspections</a></li>
+            <li class="breadcrumb-item active">{{object}}</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+{% endblock breadcrambs %}
+
+{% block content %}
+  <section class="content">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{object.question_text}} </h3>
+        <span class="float-sm-right"> </span>
+      </div>
+      <div class="card-body">
+        <p><strong>Entity :- </strong> {{object.entity}} </p>
+        <p><strong>Devices :- </strong> {{object.devices.all}} </p>
+        <p><strong>Inspectors :- </strong> {{object.inspectors.all}}</p>
+        <p><strong>Inspection Type :- </strong> {{object.inspection_type}}</p>
+        <p><strong>Start DateTime :- </strong> {{object.start_date_time}}</p>
+        <strong>Created BY :- {{object.created_by.get_full_name}}</strong>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer">
+        <p><strong>Create at :-  </strong>{{object.created_at}}
+        <span class="float-sm-right"><strong>updated at :-  </strong>{{object.updated_at}}</span></p>
+      </div>
+      <!-- /.card-footer-->
+      </div>
+  </section>
+{% endblock content %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load bootstrap4 %}
+
+{% block page_title %}
+  Details | Question | Inspections
+{% endblock page_title %}
+
+{% block breadcrambs %}
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{object.question_text}} Details</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/">Inspections</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'inspection:inspection-entity-list' %}">Entity</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'inspection:inspection-device-list' %}">Device</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'inspection:question-list' %}">Question</a></li>
+            <li class="breadcrumb-item active">{{object}}</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+{% endblock breadcrambs %}
+
+{% block content %}
+  <section class="content">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{object.question_text}} </h3>
+        <span class="float-sm-right"> </span>
+      </div>
+      <div class="card-body">
+        <p><strong>Question Text :- </strong> {{object.question_text}} </p>
+        <p><strong>Answer Type :- </strong> {{object.answer_type}} </p>
+        <p><strong>Help Text :- </strong> {{object.help_text}}</p>
+        <strong>Created BY :- {{object.created_by.get_full_name}}</strong>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer">
+        <p><strong>Create at :-  </strong>{{object.created_at}}
+        <span class="float-sm-right"><strong>updated at :-  </strong>{{object.updated_at}}</span></p>
+      </div>
+      <!-- /.card-footer-->
+      </div>
+  </section>
+{% endblock content %}

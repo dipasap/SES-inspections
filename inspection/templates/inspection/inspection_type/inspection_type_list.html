@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}
+  Type | Inspection
+{% endblock page_title %}
+
+{% block breadcrambs %}
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Type List</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/">Inspections</a></li>
+            <li class="breadcrumb-item active">Type List</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+{% endblock breadcrambs %}
+
+{% block content %}
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Type List</h3>
+              <a href="{% url 'inspection:inspection-type-create' %}" class="btn btn-primary float-right"> Add Type <i class="fa fa-plus"></i></a>
+            </div>
+            <div class="card-body">
+              <table id="RecordTable" class="table table-striped table-hover">
+                  <thead>
+                      <tr>
+                          <th>S. NO.</th>
+                          <th>Name</th>
+                          <th>Description</th>
+                          <th>Created By</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {% for type in object_list %}
+                      <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{type.name}}</td>
+                        <td>{{type.description}}</td>
+                        <td>{{type.created_by}}</td>
+                        <td>
+                          <a href="{% url 'inspection:inspection-type-details' type.id %}" title="View"><button class="btn btn-primary"><i class="fa fa-eye"></button></i></a>
+                          <a href="{% url 'inspection:inspection-type-update' type.id %}" title="Edit"><button class="btn btn-primary"><i class="fa fa-edit"></button></i></a>
+                          <button class="btn btn-primary delete_record" data-url="{% url 'inspection:inspection-type-delete' type.id %}" data-id="{{type.id}}"><i class="fa fa-trash"></button></i>
+                        </td>
+                      </tr>
+                    {% empty %}
+                        <h4> No types yet! Please hit click <a href="{% url 'inspection:inspection-type-create' %}"> Here</a> to create Entites</h4>
+                    {% endfor %}
+                  </tbody>
+              </table>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="modal fade" id="DeleteRecordModel" tabindex="-1" role="dialog" aria-labelledby="DeleteRecordModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="DeleteRecordModelLabel">New message</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="form_html"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block extra_js %}
+  <script type="text/javascript">
+    $("#RecordTable").DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+
+    $('.delete_record').on('click', function(){
+      url = $(this).data('url');
+      id = $(this).data('id')
+
+      $.get(url, function(response){
+        document.getElementById('form_html').innerHTML = response
+        $('#DeleteRecordModel').modal('show');
+      })
+    });
+  </script>
+{% endblock extra_js %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load bootstrap4 %}
+
+{% block page_title %}
+  Inspection Report
+{% endblock page_title %}
+
+{% block breadcrambs %}
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{object.name}} Details</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/">Inspections</a></li>
+            <li class="breadcrumb-item"><a href="/">Report</a></li>
+            <li class="breadcrumb-item active">{{object}}</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+{% endblock breadcrambs %}
+
+{% block content %}
+  <section class="content">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{object.inspection.name}} </h3>
+        <span class="float-sm-right"> </span>
+      </div>
+      <div class="card-body">
+        <p><strong>Inspection :- </strong> {{object.inspection.name}} </p>
+        <p><strong>Inspector :- </strong> {{object.user.get_full_name}}</p>
+        <p><strong>PDF :- </strong> <a href="{{object.pdf.url}}" target="_blank">View PDF</a></p>
+        <p><strong>is_active :- </strong> {{object.is_active}}</p>
+        <p><strong>reported_datetime :- </strong> {{object.reported_datetime}}</p>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer">
+        <p><strong>Create at :-  </strong>{{object.created_at}}
+        <span class="float-sm-right"><strong>updated at :-  </strong>{{object.updated_at}}</span></p>
+      </div>
+      <!-- /.card-footer-->
+      </div>
+  </section>
+{% endblock content %}

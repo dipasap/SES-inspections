@@ -1,0 +1,5 @@
+<form method="post" action="{% url 'inspection:inspection-entity-delete' record.id %}">
+    {% csrf_token %} 
+    <p>Are you sure you want to delete "{{ record }}"?</p> 
+    <input type="submit" class="btn btn-primary float-sm-right" value="Confirm"> 
+</form> 

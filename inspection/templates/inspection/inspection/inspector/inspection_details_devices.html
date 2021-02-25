@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load bootstrap4 %}
+
+{% block page_title %}
+  Inspections
+{% endblock page_title %}
+
+{% block breadcrambs %}
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{object.name}}</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/">Inspections</a></li>
+            <li class="breadcrumb-item active">{{object}}</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+{% endblock breadcrambs %}
+
+{% block content %}
+  <section class="content">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{object}} </h3>
+        <span class="float-sm-right"> </span>
+      </div>
+      <div class="card-body">
+        <table id="RecordTable" class="table table-striped table-hover">
+          <thead>
+              <tr>
+                  <th>S. NO.</th>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>PDF</th>
+                  <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for inspection in object.devices.all %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{inspection.name}}</td>
+                    <td>{{inspection.device_inspection.all.first.status}}</td>
+                    <td>
+                      {% if inspection.device_inspection.all.first.pdf %}
+                        <a href="{{inspection.device_inspection.all.first.pdf.url}}" target="_blank" >View PDF</a>
+                      {% else %}
+                        Not available yet! Please fill inspection first.
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if inspection.device_inspection.all.first.status == 'ready_to_start' %}
+                        <a href="{% url 'inspection:inspection-question-answer-form' inspection.device_inspection.all.first.title inspection.name inspection.id %}" title="start"><button class="btn btn-primary mt-2">Begin Inspection</button></a>
+                      {% elif inspection.device_inspection.all.first.status == 'in_progress' %}
+                        {% if request.user ==  inspection.device_inspection.all.first.inspector %}
+                          <a href="{% url 'inspection:inspection-question-answer-form' inspection.device_inspection.all.first.title inspection.name inspection.id %}" title="Edit"><button class="btn btn-primary mt-2">Edit Inspection</button></a>
+                        {% else %}
+                          In Progress by {{inspection.device_inspection.all.first.inspector.get_full_name}}
+                        {% endif %}
+                      {% else %}
+                        <a href="{% url 'inspection:inspection-question-answer-form' inspection.device_inspection.all.first.title inspection.name inspection.id %}" title="Edit"><button class="btn btn-primary mt-2">Edit Inspection</button></a>
+                      {% endif %}
+                    </td>
+                </tr>
+              {% empty %}
+                <p>Not devices yet!</p>
+              {% endfor %}
+          </tbody>
+      </table>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer">
+        {% if object.get_submit_report_url %}
+          <button class="btn btn-primary mt-2 float-right" id="submit-inspection" data-url='{% url "inspection:inspection-report-create" %}' data-ids="{{ids}}" data-inspection="{{object.pk}}">Submit Report</button>
+        {% endif %}
+        <br>
+        <!--<p><strong>Create at :-  </strong>{{object.created_at}}
+        <span class="float-sm-right"><strong>updated at :-  </strong>{{object.updated_at}}</span></p>-->
+      </div>
+      <!-- /.card-footer-->
+      </div>
+  </section>
+{% endblock content %}
+
+{% block extra_js %}
+  <script type="text/javascript">
+      $('#submit-inspection').on('click', function(){
+        ids = $(this).data('ids');
+        url = $(this).data('url');
+        inspection_id = $(this).data('inspection');
+        csrfmiddlewaretoken = '{{csrf_token}}';
+        data = {'csrfmiddlewaretoken':csrfmiddlewaretoken, 'ids':ids, 'inspection_id':inspection_id}
+        debugger
+        $.post(url, data, function(response){
+            location.href = '{% url "inspection:dashboard" %}'
+        });
+
+      });
+  </script>
+{% endblock extra_js %}
+

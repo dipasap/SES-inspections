@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}
+  Question | Inspection
+{% endblock page_title %}
+
+{% block breadcrambs %}
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Question List</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/">Inspections</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'inspection:inspection-entity-list' %}">Entity</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'inspection:inspection-device-list' %}">Device</a></li>
+            <li class="breadcrumb-item active">Question</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+{% endblock breadcrambs %}
+
+{% block content %}
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Question</h3>
+              <a href="{% url 'inspection:question-create' %}" class="btn btn-primary float-right"> Add Question <i class="fa fa-plus"></i></a>
+            </div>
+            <div class="card-body">
+              <table id="RecordTable" class="table table-striped table-hover">
+                  <thead>
+                      <tr>
+                          <th>S. NO.</th>
+                          <th>Question</th>
+                          <th>Answer Type</th>
+                          <th>Choices</th>
+                          <th>Entity</th>
+                          <th>Device</th>
+                          <th>Category</th>
+                          <th>Created By</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {% for question in object_list %}
+                      <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{question.question_text}}</td>
+                        <td>{{question.answer_type}}</td>
+                        <td>{{question.choices}}</td>
+                        <td>{{question.entity.name}}</td>
+                        <td>{{question.device}}</td>
+                        <td>{{question.category}}</td>
+                        <td>{{question.created_by}}</td>
+                        <td>
+                          <a href="{% url 'inspection:question-details' question.id %}" title="View"><button class="btn btn-primary mt-2"><i class="fa fa-eye"></button></i></a>
+                          <a href="{% url 'inspection:question-update' question.id %}" title="Edit"><button class="btn btn-primary mt-2"><i class="fa fa-edit"></button></i></a>
+                          <button class="btn btn-primary delete_record mt-2" data-url="{% url 'inspection:question-delete' question.id %}" data-id="{{question.id}}"><i class="fa fa-trash"></button></i>
+                        </td>
+                      </tr>
+                    {% empty %}
+                        <h4> No Question yet! Please hit click <a href="{% url 'inspection:question-create' %}"> Here</a> to create Questions</h4>
+                    {% endfor %}
+                  </tbody>
+              </table>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+  </section>
+  <div class="modal fade" id="DeleteRecordModel" tabindex="-1" role="dialog" aria-labelledby="DeleteRecordModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="DeleteRecordModelLabel">New message</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="form_html"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block extra_js %}
+  <script type="text/javascript">
+    $("#RecordTable").DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": true,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+    $('.delete_record').on('click', function(){
+      url = $(this).data('url');
+      id = $(this).data('id')
+
+      $.get(url, function(response){
+        document.getElementById('form_html').innerHTML = response
+        $('#DeleteRecordModel').modal('show');
+      })
+    });
+  </script>
+{% endblock extra_js %}

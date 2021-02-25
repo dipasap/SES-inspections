@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load bootstrap4 %}
+
+{% block page_title %}
+  Entity | Create | Inspections
+{% endblock page_title %}
+
+{% block breadcrambs %}
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Details</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'inspection:inspection-entity-list' %}">Entities</a></li>
+            <li class="breadcrumb-item active">{{object.get_full_name}}</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+{% endblock breadcrambs %}
+
+{% block content %}
+  <section class="content">
+    <div class="card">
+      <div class="card-header projects">
+        {% if object.profile_image %}
+          <img class="table-avatar" src="{{object.profile_image.url}}" alt="avatar">
+        {% else %}
+          <img class="table-avatar" src="{% static 'dist/img/avatar5.png' %}">
+        {% endif %}
+        <h3 class="card-title float-sm-right">
+          <span> <strong>Role:-</strong>
+            {% if object.is_admin %}
+              Admin
+            {% elif object.is_inspector %}
+              Inspector
+            {% else %}
+              Super Admin
+            {% endif %}
+          </span>
+        </h3>
+      </div>
+      <div class="card-body">
+        <p><strong>Name :- </strong> {{object.get_full_name}}</p>
+        <p><strong>Email :- </strong> {{object.email}}</p>
+        <p><strong>Date of Birth :- </strong> {{object.date_of_birth}}</p>
+        <p><strong>Contact No. :- </strong> {{object.phone_number}}</p>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer">
+        <p><strong>Create at :-  </strong>{{object.created_at}}
+        <span class="float-sm-right"><strong>updated at :-  </strong>{{object.updated_at}}</span></p>
+      </div>
+      <!-- /.card-footer-->
+      </div>
+  </section>
+{% endblock content %}
